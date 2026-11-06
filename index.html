@@ -241,6 +241,7 @@
       <!-- Game guides -->
       <div class="mt-6 rounded-3xl border border-blue-100 bg-white/70 p-8 shadow-xl shadow-blue-100/50 backdrop-blur-md">
         <h3 class="text-lg font-bold text-slate-800" data-i18n="howto.gamesTitle">Games in the hall</h3>
+        <p class="mt-1 text-sm text-slate-500" data-i18n="howto.clickHint">Tap a game name to open its screenshots.</p>
         <div class="mt-6 grid gap-4 sm:grid-cols-2" id="game-list"></div>
       </div>
 
@@ -265,6 +266,21 @@
   <footer class="border-t border-blue-100 bg-white/60 py-10 backdrop-blur-md">
     <p class="text-center text-sm text-slate-500" data-i18n="footer.text">© 2026 Software Engineering Project Team. Built with passion.</p>
   </footer>
+
+  <!-- Game screenshot viewer -->
+  <div id="game-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="game-modal-title">
+    <div class="mx-auto flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-blue-100 bg-white shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-blue-100 px-6 py-4">
+        <div>
+          <h3 id="game-modal-title" class="cursor-pointer text-lg font-bold text-slate-800 transition hover:text-cyan-700"></h3>
+          <p id="game-modal-hint" class="mt-0.5 text-xs text-slate-400"></p>
+        </div>
+        <button id="game-modal-close" type="button" aria-label="Close"
+                class="flex h-9 w-9 flex-none items-center justify-center rounded-full border border-blue-100 text-slate-500 transition hover:border-cyan-200 hover:text-cyan-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-cyan-100">✕</button>
+      </div>
+      <div id="game-modal-body" class="grid gap-4 overflow-y-auto p-6 sm:grid-cols-2"></div>
+    </div>
+  </div>
 
   <script>
     (() => {
@@ -365,11 +381,52 @@
               { title: 'Create or join', text: 'The host creates a room and shares the code; everyone else joins with it.' },
             ],
             gamesTitle: 'Games in the hall',
+            clickHint: 'Tap a game name to open its screenshots.',
+            modalHint: 'Click the title or outside to close',
             games: [
-              { icon: '🎨', title: 'Draw & Guess', text: 'One player draws the word on their phone; everyone else guesses. The AI grades composition, creativity and relevance.', tags: ['Canvas', 'AI score'] },
-              { icon: '🕵️', title: 'Who is Spy', text: 'Civilians share one word, the spy gets a similar one. Describe, discuss, then vote out the spy.', tags: ['Voting', 'Word pairs'] },
-              { icon: '🎭', title: 'Fusion Mode', text: 'Draw first, then vote. A hybrid of drawing and social deduction with the same canvas and scoring.', tags: ['Hybrid', 'Review'] },
-              { icon: '🎡', title: 'Truth or Dare', text: 'Spin the wheel, answer a question or take a dare. Custom packs are supported.', tags: ['Wheel', 'Custom packs'] },
+              {
+                icon: '🎨',
+                title: 'Draw & Guess',
+                text: 'One player draws the word on their phone; everyone else guesses. The AI grades the drawing against the word.',
+                tags: ['Canvas', 'AI score'],
+                shots: [
+                  { src: 'assets/games/draw-1.jpg', alt: 'Live drawing with AI scoring', caption: 'Live canvas — AI is recognising and scoring' },
+                  { src: 'assets/games/draw-2.jpg', alt: 'Final ranking screen', caption: 'Final ranking and the round artwork' },
+                ],
+              },
+              {
+                icon: '🕵️',
+                title: 'Who is Spy',
+                text: 'Civilians share one word, the spy gets a similar one. Describe, discuss, then vote out the spy.',
+                tags: ['Voting', 'Word pairs'],
+                shots: [
+                  { src: 'assets/games/spy-1.jpg', alt: 'Secret word card', caption: 'Secret word card — each player sees only their own' },
+                  { src: 'assets/games/spy-2.jpg', alt: 'Waiting for the current speaker', caption: 'Speaking turn — one player at a time, the rest wait' },
+                  { src: 'assets/games/spy-3.jpg', alt: 'Your turn to describe', caption: 'Your turn — describe the word without saying it' },
+                  { src: 'assets/games/spy-4.jpg', alt: 'Voting for the spy', caption: 'Vote for the spy — no self-vote, abstain allowed' },
+                  { src: 'assets/games/spy-5.jpg', alt: 'Round reveal', caption: 'Round result — who was eliminated and with how many votes' },
+                ],
+              },
+              {
+                icon: '🎭',
+                title: 'Fusion Mode',
+                text: 'Draw first, then vote. A hybrid of drawing and social deduction with the same canvas and scoring.',
+                tags: ['Hybrid', 'Review'],
+                shots: [
+                  { src: 'assets/games/fusion-1.jpg', alt: 'Reviewing all artworks', caption: 'Review every artwork, then vote' },
+                  { src: 'assets/games/fusion-2.jpg', alt: 'Voting in fusion mode', caption: 'Vote for the undercover' },
+                ],
+              },
+              {
+                icon: '🎡',
+                title: 'Truth or Dare',
+                text: 'Spin the wheel, answer a question or take a dare. Custom packs are supported.',
+                tags: ['Wheel', 'Custom packs'],
+                shots: [
+                  { src: 'assets/games/truth-1.jpg', alt: 'Dare prompt screen', caption: 'Dare — a 30-second challenge' },
+                  { src: 'assets/games/truth-2.jpg', alt: 'Truth prompt screen', caption: 'Truth — an icebreaker question' },
+                ],
+              },
             ],
             tip: 'Tip: the host creates the room and shares the QR code — no projector or laptop required.',
           },
@@ -477,11 +534,52 @@
               { title: '创建或加入', text: '主持人创建房间并分享房间码，其他人输入房间码加入。' },
             ],
             gamesTitle: '大厅里的游戏',
+            clickHint: '点击游戏名称查看截图。',
+            modalHint: '点击标题或空白处关闭',
             games: [
-              { icon: '🎨', title: '你画我猜', text: '一名玩家在手机上作画，其他人猜词；AI 从构图、创意、契合度三个维度评分。', tags: ['画布', 'AI 评分'] },
-              { icon: '🕵️', title: '谁是卧底', text: '平民拿到同一个词，卧底拿到相近词。轮流描述，再投票找出卧底。', tags: ['投票', '词对'] },
-              { icon: '🎭', title: '融合玩法', text: '先画再投：结合画作与推理，复用同一套画布与评分。', tags: ['融合', '复盘'] },
-              { icon: '🎡', title: '真心话大冒险', text: '转动转盘，选择真心话或大冒险，支持自定义题库。', tags: ['转盘', '自定义'] },
+              {
+                icon: '🎨',
+                title: '你画我猜',
+                text: '一名玩家在手机上作画，其他人猜词；AI 判断画作与题目的语义相似度并打分。',
+                tags: ['画布', 'AI 评分'],
+                shots: [
+                  { src: 'assets/games/draw-1.jpg', alt: '作画中，AI 正在评分', caption: '实时画布 —— AI 正在识别评分' },
+                  { src: 'assets/games/draw-2.jpg', alt: '最终排名界面', caption: '最终排名与本轮作品' },
+                ],
+              },
+              {
+                icon: '🕵️',
+                title: '谁是卧底',
+                text: '平民拿到同一个词，卧底拿到相近词。轮流描述，再投票找出卧底。',
+                tags: ['投票', '词对'],
+                shots: [
+                  { src: 'assets/games/spy-1.jpg', alt: '秘密词卡', caption: '秘密词卡 —— 每人只能看自己的' },
+                  { src: 'assets/games/spy-2.jpg', alt: '等待他人发言', caption: '发言回合 —— 轮流发言，其余人等待' },
+                  { src: 'assets/games/spy-3.jpg', alt: '轮到自己发言', caption: '轮到你 —— 描述词语但不能直接说出' },
+                  { src: 'assets/games/spy-4.jpg', alt: '投票找出卧底', caption: '投票 —— 不能自投，可以弃权' },
+                  { src: 'assets/games/spy-5.jpg', alt: '回合揭晓', caption: '回合揭晓 —— 谁出局、得几票' },
+                ],
+              },
+              {
+                icon: '🎭',
+                title: '融合玩法',
+                text: '先画再投：结合画作与推理，复用同一套画布与评分。',
+                tags: ['融合', '复盘'],
+                shots: [
+                  { src: 'assets/games/fusion-1.jpg', alt: '查看所有画作', caption: '先看所有人的画作，再投票' },
+                  { src: 'assets/games/fusion-2.jpg', alt: '融合玩法投票', caption: '投票选出卧底' },
+                ],
+              },
+              {
+                icon: '🎡',
+                title: '真心话大冒险',
+                text: '转动转盘，选择真心话或大冒险，支持自定义题库。',
+                tags: ['转盘', '自定义'],
+                shots: [
+                  { src: 'assets/games/truth-1.jpg', alt: '大冒险题目', caption: '大冒险 —— 30 秒挑战题' },
+                  { src: 'assets/games/truth-2.jpg', alt: '真心话题目', caption: '真心话 —— 破冰问题' },
+                ],
+              },
             ],
             tip: '小提示：主持人创建房间并分享二维码即可，不需要投影或电脑。',
           },
@@ -687,12 +785,16 @@
 
         document.getElementById('game-list').innerHTML = t().howto.games
           .map(
-            (game) => `
+            (game, index) => `
             <article class="rounded-2xl border border-blue-100 bg-white/70 p-5 transition hover:-translate-y-0.5 hover:border-cyan-200">
               <div class="flex items-start gap-3">
                 <span class="text-2xl">${game.icon}</span>
-                <div>
-                  <h4 class="text-base font-bold text-slate-800">${game.title}</h4>
+                <div class="min-w-0 flex-1">
+                  <button type="button" data-game="${index}"
+                          class="flex items-center gap-2 rounded text-left text-base font-bold text-slate-800 transition hover:text-cyan-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-cyan-100">
+                    ${game.title}
+                    <span class="rounded-full bg-cyan-50 px-2 py-0.5 text-[10px] font-semibold text-cyan-700">${game.shots.length}</span>
+                  </button>
                   <p class="mt-1.5 text-sm leading-relaxed text-slate-600">${game.text}</p>
                   <div class="mt-3 flex flex-wrap gap-2">
                     ${game.tags
@@ -707,7 +809,62 @@
             </article>`
           )
           .join('')
+
+        document.querySelectorAll('[data-game]').forEach((button) => {
+          button.addEventListener('click', () => toggleGame(Number(button.dataset.game)))
+        })
       }
+
+      /* ------------------------------------------------------------
+         Game screenshot viewer (open / close on the same title)
+         ------------------------------------------------------------ */
+      const gameModal = document.getElementById('game-modal')
+      const gameModalTitle = document.getElementById('game-modal-title')
+      const gameModalHint = document.getElementById('game-modal-hint')
+      const gameModalBody = document.getElementById('game-modal-body')
+      let openGameIndex = null
+
+      function paintGameModal(index) {
+        const game = t().howto.games[index]
+        gameModalTitle.textContent = game.title
+        gameModalHint.textContent = t().howto.modalHint
+        gameModalBody.innerHTML = game.shots
+          .map(
+            (shot) => `
+            <figure class="overflow-hidden rounded-2xl border border-blue-100 bg-slate-50">
+              <img src="${shot.src}" alt="${shot.alt}" class="block h-auto w-full" loading="lazy" />
+              <figcaption class="px-3 py-2 text-xs text-slate-500">${shot.caption}</figcaption>
+            </figure>`
+          )
+          .join('')
+      }
+
+      function closeGameModal() {
+        openGameIndex = null
+        gameModal.style.display = 'none'
+        document.body.style.overflow = ''
+      }
+
+      function toggleGame(index) {
+        if (openGameIndex === index) {
+          closeGameModal()
+          return
+        }
+        openGameIndex = index
+        paintGameModal(index)
+        gameModal.style.display = 'flex'
+        document.body.style.overflow = 'hidden'
+        document.getElementById('game-modal-close').focus()
+      }
+
+      gameModal.addEventListener('click', (event) => {
+        if (event.target === gameModal) closeGameModal()
+      })
+      document.getElementById('game-modal-close').addEventListener('click', closeGameModal)
+      gameModalTitle.addEventListener('click', closeGameModal)
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && openGameIndex !== null) closeGameModal()
+      })
 
       /* ------------------------------------------------------------
          Tech stack cards
@@ -746,6 +903,7 @@
         renderRolePanel()
         renderHowTo()
         renderStack()
+        if (openGameIndex !== null) paintGameModal(openGameIndex)
 
         document.getElementById('lang-en').classList.toggle('lang-active', state.lang === 'en')
         document.getElementById('lang-zh').classList.toggle('lang-active', state.lang === 'zh')
@@ -768,6 +926,12 @@
          Init
          ------------------------------------------------------------ */
       renderAll()
+
+      // Deep link: ?game=0 opens that game's screenshots (useful for sharing).
+      const requestedGame = Number(new URLSearchParams(window.location.search).get('game'))
+      if (Number.isInteger(requestedGame) && requestedGame >= 0 && requestedGame < t().howto.games.length) {
+        toggleGame(requestedGame)
+      }
 
       // Re-align hash targets once the Tailwind CDN stylesheet has applied.
       window.addEventListener('load', () => {
