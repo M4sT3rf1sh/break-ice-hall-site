@@ -486,6 +486,15 @@
       // Initial render (no animation on first paint)
       renderRole(currentRole)
       setActiveTab(currentRole)
+
+      // Direct visits to #team / #stack can land on a stale position because the
+      // Tailwind CDN stylesheet arrives after the browser's first anchor scroll.
+      // Re-align once the page has fully loaded.
+      window.addEventListener('load', () => {
+        if (!window.location.hash) return
+        const target = document.querySelector(window.location.hash)
+        if (target) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }))
+      })
     })()
   </script>
 </body>
